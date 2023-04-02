@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "rootDir": ".",
+    "baseUrl": ".",
+    // "paths": {
+    //   "@brick": ["utils/brick/index.ts"]
+    // },
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "sourceMap": true
+    // "skipLibCheck": true /* Skip type checking all .d.ts files. */
+  },
+  // "include": ["src", "utils"],
+  "exclude": ["node_modules"]
+}
