@@ -16,6 +16,6 @@
     "sourceMap": true
     // "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  // "include": ["src", "utils"],
+  "include": ["src", "utils", "index.d.ts"],
   "exclude": ["node_modules"]
 }

@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export const brickPublicAccessToken =
   process.env.NODE_ENV === 'production'
     ? process.env.BRICK_PRODUCTION_PUBLIC_ACCESS_TOKEN
