@@ -75,10 +75,16 @@ declare global {
 app.use(connectToPostgres);
 
 app.use((req, res, next) => {
-  res.setHeader(
-    'Access-Control-Allow-Origin',
-    'http://localhost:3000, https://app.kudoku.id, https://bgst.kudoku.id'
-  );
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://app.kudoku.id',
+    'https://bgst.kudoku.id',
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin as string)) {
+    // add type assertion
+    res.setHeader('Access-Control-Allow-Origin', origin as string); // add type assertion
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
