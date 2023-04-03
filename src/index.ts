@@ -74,6 +74,16 @@ declare global {
 
 app.use(connectToPostgres);
 
+app.use((req, res, next) => {
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    'http://localhost:3000, https://app.kudoku.id, https://bgst.kudoku.id'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
 const bcaRoute = require('./routes/Bca');
 const gopayRoute = require('./routes/Gopay');
 const utilsRoute = require('./routes/Utils');
