@@ -76,11 +76,13 @@ app.use(connectToPostgres);
 
 const bcaRoute = require('./routes/Bca');
 const gopayRoute = require('./routes/Gopay');
+const utilsRoute = require('./routes/Utils');
 
 app.use(bodyParser.json());
 
 app.use('/bca', bcaRoute);
 app.use('/gopay', gopayRoute);
+app.use('/utils', utilsRoute);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
