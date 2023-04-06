@@ -90,14 +90,26 @@ app.use((req, res, next) => {
   next();
 });
 
-const bcaRoute = require('./routes/Bca');
-const gopayRoute = require('./routes/Gopay');
+const bcaRoute = require('./routes/bank/Bca');
+// const bniRoute = require('./routes/bank/Bni');
+// const bsiRoute = require('./routes/bank/Bsi');
+// const mandiriRoute = require('./routes/bank/Mandiri');
+// const briRoute = require('./routes/bank/Bri');
+const gopayRoute = require('./routes/ewallet/Gopay');
+// const ovoRoute = require('./routes/ewallet/Ovo');
+// const shopeepayRoute = require('./routes/ewallet/Shopeepay');
 const utilsRoute = require('./routes/Utils');
 
 app.use(bodyParser.json());
 
 app.use('/bca', bcaRoute);
+// app.use('/bni', bniRoute);
+// app.use('/bsi', bsiRoute);
+// app.use('/mandiri', mandiriRoute);
+// app.use('/bri', briRoute);
 app.use('/gopay', gopayRoute);
+// app.use('/ovo', ovoRoute);
+// app.use('/shopeepay', shopeepayRoute);
 app.use('/utils', utilsRoute);
 
 app.listen(port, () => {

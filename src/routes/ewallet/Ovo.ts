@@ -5,11 +5,11 @@ import {
   brickUrl,
   getAccountDetail,
   getClientIdandRedirectRefId,
-} from '../../utils/brick';
+} from '../../../utils/brick';
 import {
   decodeAuthHeaderApp,
   decodeAuthHeaderBgst,
-} from '../../utils/authHeader';
+} from '../../../utils/authHeader';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -73,7 +73,7 @@ router.post('/sendotp', async (req, res) => {
         Authorization: `Bearer ${brickPublicAccessToken}`,
       },
       data: {
-        institutionId: 11,
+        institutionId: 12,
         username: phoneNumber,
         redirectRefId,
       },
@@ -81,7 +81,7 @@ router.post('/sendotp', async (req, res) => {
 
     const {
       data: { data },
-    }: { data: { data: BrickOTPData } } = await axios.request(options);
+    }: { data: { data: BrickOvoOtpData } } = await axios.request(options);
 
     res.status(200).json({ ...data, clientId, redirectRefId });
   } catch (error) {
@@ -90,15 +90,15 @@ router.post('/sendotp', async (req, res) => {
   }
 });
 
-router.post('/account', async (req, res) => {
+router.post('/token', async (req, res) => {
   try {
     const {
       type,
       username,
-      uniqueId,
-      sessionId,
-      otpToken,
+      refId,
+      deviceId,
       otp,
+      pin,
       clientId,
       redirectRefId,
     } = req.body;
@@ -142,7 +142,7 @@ router.post('/account', async (req, res) => {
       return res.status(404).send(`brickUserId is null`);
     // end verification
 
-    const url = brickUrl(`/v1/auth/gopay/${clientId}`);
+    const url = brickUrl(`/v1/auth/ovo/${clientId}`);
 
     const options = {
       method: 'POST',
@@ -153,13 +153,12 @@ router.post('/account', async (req, res) => {
         Authorization: `Bearer ${brickPublicAccessToken}`,
       },
       data: {
-        institutionId: 11,
         username,
+        refId,
+        deviceId,
+        otpNumber: otp,
+        pin,
         redirectRefId,
-        sessionId,
-        uniqueId,
-        otpToken,
-        otp,
       },
     };
 
@@ -167,10 +166,60 @@ router.post('/account', async (req, res) => {
       data: { data },
     }: { data: { data: BrickTokenData } } = await axios.request(options);
 
-    const accountDetail = await getAccountDetail(data.accessToken);
+    res.status(200).json({ ...data });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Fatal error');
+  }
+});
 
-    const wallet = { ...accountDetail[0], accessToken: data.accessToken };
-    const payLater = { ...accountDetail[1], accessToken: data.accessToken };
+router.post('/account', async (req, res) => {
+  try {
+    const { type, accessToken } = req.body;
+
+    // start verification
+    const authHeader = req.headers.authorization;
+
+    let brickUserId: string | null = null;
+
+    if (!authHeader) return res.status(400).send('Invalid header');
+
+    if (type === 'kudoku-app') {
+      const { userId: _userId } = decodeAuthHeaderApp(authHeader, res);
+
+      const collection = req.db.collection('User');
+
+      const userId = new ObjectId(_userId);
+
+      const user = await collection.findOne({ _id: userId });
+
+      if (!user)
+        return res.status(404).send(`User with ID ${_userId} not found`);
+
+      brickUserId = _userId;
+    } else if (type === 'BGST') {
+      const { email } = decodeAuthHeaderBgst(authHeader, res);
+
+      const result = await req.pg.query('SELECT * FROM User WHERE email = $1', [
+        email,
+      ]);
+
+      if (result.rows.length === 0)
+        return res.status(404).send(`User with email ${email} not found`);
+
+      brickUserId = email;
+    } else {
+      return res.status(400).send('Invalid type');
+    }
+
+    if (brickUserId === null)
+      return res.status(404).send(`brickUserId is null`);
+    // end verification
+
+    const accountDetail = await getAccountDetail(accessToken);
+
+    const wallet = { ...accountDetail[0] };
+    const payLater = { ...accountDetail[1] };
 
     res.status(200).json({ eWallet: wallet, payLater: payLater });
   } catch (error) {
@@ -221,11 +270,6 @@ router.post('/transaction', async (req, res) => {
     if (brickUserId === null)
       return res.status(404).send(`brickUserId is null`);
     // end verification
-
-    /**
-     * Pull the initial transaction for the month
-     * We pull 7 days before only
-     */
 
     const transactionUrl = brickUrl(`/v1/transaction/list`);
 

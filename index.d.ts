@@ -63,11 +63,23 @@ declare global {
     userId: string;
   }
 
-  interface BrickOTPData {
+  interface BrickGojekOTPData {
     username: string;
     uniqueId: string;
     sessionId: string;
     otpToken: string;
+  }
+
+  interface BrickOvoOtpData {
+    username: string;
+    refId: string;
+    deviceId: string;
+  }
+
+  interface BrickShopeepayOtpData {
+    username: string;
+    sessionId: string;
+    duration: number;
   }
 }
 
