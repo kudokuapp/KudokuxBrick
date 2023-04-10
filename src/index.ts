@@ -37,11 +37,8 @@ app.use(connectToMongo);
 
 // PostgreSQL connection setup
 const pgPool = new Pool({
-  user: process.env.POSTGRES_DB_USERNAME as string,
-  password: process.env.POSTGRES_DB_PASSWORD as string,
-  host: process.env.POSTGRES_DB_HOST as string,
-  port: Number(process.env.POSTGRES_DB_PORT),
-  database: process.env.POSTGRES_DB_DATABASE as string,
+  connectionString:
+    'postgresql://doadmin:AVNS_shiNfBj92xKgyRw@kudoku-early-user-do-user-9612437-0.b.db.ondigitalocean.com:25061/bgst',
   ssl: {
     rejectUnauthorized: false,
     ca: process.env.POSTGRES_DB_PGCACERT as string,
