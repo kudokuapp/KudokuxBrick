@@ -35,9 +35,10 @@ router.post('/checkifexpired', async (req, res) => {
     } else if (type === 'BGST') {
       const { email } = decodeAuthHeaderBgst(authHeader, res);
 
-      const result = await req.pg.query('SELECT * FROM User WHERE email = $1', [
-        email,
-      ]);
+      const result = await req.pg.query(
+        'SELECT * FROM "User" WHERE "email"=$1',
+        [email]
+      );
 
       if (result.rows.length === 0)
         return res.status(404).send(`User with email ${email} not found`);
