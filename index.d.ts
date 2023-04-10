@@ -24,7 +24,7 @@ declare global {
     status: 'CONFIRMED' | 'PENDING';
     direction: 'out' | 'in';
     reference_id: string;
-    category: Category;
+    category: Category | null;
     transaction_type: null | string;
   }
 
@@ -63,11 +63,23 @@ declare global {
     userId: string;
   }
 
-  interface BrickOTPData {
+  interface BrickGojekOTPData {
     username: string;
     uniqueId: string;
     sessionId: string;
     otpToken: string;
+  }
+
+  interface BrickOvoOtpData {
+    username: string;
+    refId: string;
+    deviceId: string;
+  }
+
+  interface BrickShopeepayOtpData {
+    username: string;
+    sessionId: string;
+    duration: number;
   }
 }
 
