@@ -24,7 +24,7 @@ declare global {
     status: 'CONFIRMED' | 'PENDING';
     direction: 'out' | 'in';
     reference_id: string;
-    category: Category;
+    category: Category | null;
     transaction_type: null | string;
   }
 
